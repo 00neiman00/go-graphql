@@ -1,9 +1,9 @@
 schema:
     - schema.graphql
 exec:
-    filename: generated.go
+    filename: graphql/generated.go
 model:
-    filename: models_gen.go
+    filename: graphql/models_gen.go
 models:
   User:
     model: github.com/neimen-95/go-graphql/models.User
@@ -16,6 +16,6 @@ models:
       user:
         resolver: true
 resolver:
-  filename: resolver.go
+  filename: resolver/resolver.go
   type: Resolver
 autobind: []

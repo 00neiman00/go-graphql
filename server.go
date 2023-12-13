@@ -2,7 +2,10 @@ package main
 
 import (
 	"github.com/go-pg/pg/v10"
+	"github.com/neimen-95/go-graphql/dataloader"
+	"github.com/neimen-95/go-graphql/graphql"
 	"github.com/neimen-95/go-graphql/postgres"
+	"github.com/neimen-95/go-graphql/resolver"
 	"log"
 	"net/http"
 	"os"
@@ -27,15 +30,15 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
-	c := Config{Resolvers: &Resolver{
-		meetupRepository: &postgres.MeetupRepository{DB: DB},
-		userRepository:   &postgres.UserRepository{DB: DB},
+	c := graphql.Config{Resolvers: &resolver.Resolver{
+		MeetupRepository: &postgres.MeetupRepository{DB: DB},
+		UserRepository:   &postgres.UserRepository{DB: DB},
 	}}
 
-	srv := handler.NewDefaultServer(NewExecutableSchema(c))
+	queryHandler := handler.NewDefaultServer(graphql.NewExecutableSchema(c))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	http.Handle("/query", dataloader.DataloaderMiddleWare(DB, queryHandler))
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
