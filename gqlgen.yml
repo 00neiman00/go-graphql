@@ -1,0 +1,21 @@
+schema:
+    - schema.graphql
+exec:
+    filename: generated.go
+model:
+    filename: models_gen.go
+models:
+  User:
+    model: github.com/neimen-95/go-graphql/models.User
+    fields:
+      meetup:
+        resolver: true
+  Meetup:
+    model: github.com/neimen-95/go-graphql/models.Meetup
+    fields:
+      user:
+        resolver: true
+resolver:
+  filename: resolver.go
+  type: Resolver
+autobind: []
