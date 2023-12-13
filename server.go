@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/go-pg/pg/v10"
+	"github.com/neimen-95/go-graphql/postgres"
 	"log"
 	"net/http"
 	"os"
@@ -12,11 +14,23 @@ import (
 const defaultPort = "8080"
 
 func main() {
+	DB := postgres.New(&pg.Options{
+		User:     "postgres",
+		Password: "postgres",
+		Database: "meetmeup",
+	})
+
+	defer DB.Close()
+	DB.AddQueryHook(postgres.DbLogger{})
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
 	}
-	c := Config{Resolvers: &Resolver{}}
+	c := Config{Resolvers: &Resolver{
+		meetupRepository: &postgres.MeetupRepository{DB: DB},
+		userRepository:   &postgres.UserRepository{DB: DB},
+	}}
 
 	srv := handler.NewDefaultServer(NewExecutableSchema(c))
 

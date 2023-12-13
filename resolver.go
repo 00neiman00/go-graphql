@@ -5,77 +5,52 @@ package main
 import (
 	"context"
 	"errors"
+	"github.com/neimen-95/go-graphql/postgres"
 
 	"github.com/neimen-95/go-graphql/models"
 )
 
-var meetups = []*models.Meetup{
-	{
-		ID:          "1",
-		Name:        "GraphQL Meetup",
-		Description: "First meetup",
-		UserId:      "1",
-	},
-	{
-		ID:          "2",
-		Name:        "Go Meetup",
-		Description: "Second meetup",
-		UserId:      "2",
-	},
+type Resolver struct {
+	meetupRepository *postgres.MeetupRepository
+	userRepository   *postgres.UserRepository
 }
-
-var users = []*models.User{
-	{
-		ID:       "1",
-		Username: "neimen",
-		Email:    "neimen@gmail.com",
-	},
-	{
-		ID:       "2",
-		Username: "john doe",
-		Email:    "john@gmail.com",
-	},
-}
-
-type Resolver struct{}
 
 // User is the resolver for the user field.
 func (r *meetupResolver) User(ctx context.Context, obj *models.Meetup) (*models.User, error) {
-	user := new(models.User)
-	for _, u := range users {
-		if u.ID == obj.UserId {
-			user = u
-			break
-		}
+	user, err := r.userRepository.FindById(obj.UserId)
+	if err != nil {
+		return nil, err
 	}
-
-	if user != nil {
-		return user, nil
-	}
-
-	return nil, errors.New("user not found")
+	return user, nil
 }
 
 // CreateMeetup is the resolver for the createMeetup field.
 func (r *mutationResolver) CreateMeetup(ctx context.Context, newMeetup NewMeetup) (*models.Meetup, error) {
-	panic("not implemented")
+	if len(newMeetup.Name) < 3 {
+		return nil, errors.New("name must be at least 3 characters")
+	}
+
+	if len(newMeetup.Description) < 3 {
+		return nil, errors.New("description must be at least 3 characters")
+	}
+
+	meetup := &models.Meetup{
+		Name:        newMeetup.Name,
+		Description: newMeetup.Description,
+		UserId:      "1",
+	}
+	return r.meetupRepository.CreateMeetup(meetup)
 }
 
 // Meetups is the resolver for the meetups field.
 func (r *queryResolver) Meetups(ctx context.Context) ([]*models.Meetup, error) {
-	return meetups, nil
+	return r.meetupRepository.GetMeetups()
 }
 
 type userResolver struct{ *Resolver }
 
 func (u *userResolver) Meetup(ctx context.Context, obj *models.User) ([]*models.Meetup, error) {
 	var userMeetups []*models.Meetup
-	for _, m := range meetups {
-		if m.UserId == obj.ID {
-			userMeetups = append(userMeetups, m)
-		}
-	}
-
 	return userMeetups, nil
 }
 
