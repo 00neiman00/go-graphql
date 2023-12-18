@@ -27,6 +27,15 @@ func (m *MeetupRepository) GetById(id string) (*models.Meetup, error) {
 	return &meetup, nil
 }
 
+func (m *MeetupRepository) GetByUserId(userId string) ([]*models.Meetup, error) {
+	var meetups []*models.Meetup
+	err := m.DB.Model(&meetups).Where("user_id = ?", userId).Select()
+	if err != nil {
+		return nil, err
+	}
+	return meetups, nil
+}
+
 func (m *MeetupRepository) CreateMeetup(meetup *models.Meetup) (*models.Meetup, error) {
 	_, err := m.DB.Model(meetup).Returning("*").Insert()
 	if err != nil {
