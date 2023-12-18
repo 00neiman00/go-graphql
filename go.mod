@@ -4,7 +4,11 @@ go 1.21.3
 
 require (
 	github.com/99designs/gqlgen v0.17.41
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/go-chi/chi v1.5.5
 	github.com/go-pg/pg/v10 v10.11.2
+	github.com/pkg/errors v0.9.1
+	github.com/rs/cors v1.10.1
 	github.com/vektah/gqlparser/v2 v2.5.10
 )
 
