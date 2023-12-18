@@ -15,7 +15,7 @@ type mutationResolver struct{ *Resolver }
 func (r *Resolver) Mutation() graphql.MutationResolver { return &mutationResolver{r} }
 
 // CreateMeetup is the resolver for the createMeetup field.
-func (r *mutationResolver) CreateMeetup(ctx context.Context, newMeetup graphql.NewMeetup) (*models.Meetup, error) {
+func (r *mutationResolver) CreateMeetup(ctx context.Context, newMeetup models.NewMeetup) (*models.Meetup, error) {
 	if len(newMeetup.Name) < 3 {
 		return nil, errors.New("name must be at least 3 characters")
 	}
@@ -32,7 +32,7 @@ func (r *mutationResolver) CreateMeetup(ctx context.Context, newMeetup graphql.N
 	return r.MeetupRepository.CreateMeetup(meetup)
 }
 
-func (r *mutationResolver) UpdateMeetup(ctx context.Context, id string, input graphql.UpdateMeetup) (*models.Meetup, error) {
+func (r *mutationResolver) UpdateMeetup(ctx context.Context, id string, input models.UpdateMeetup) (*models.Meetup, error) {
 	meetup, err := r.MeetupRepository.GetById(id)
 	if err != nil {
 		return nil, errors.New("meetup not found")

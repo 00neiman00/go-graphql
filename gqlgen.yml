@@ -3,7 +3,7 @@ schema:
 exec:
     filename: graphql/generated.go
 model:
-    filename: graphql/models_gen.go
+    filename: models/models_gen.go
 models:
   User:
     model: github.com/neimen-95/go-graphql/models.User

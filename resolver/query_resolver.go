@@ -6,12 +6,11 @@ import (
 	"github.com/neimen-95/go-graphql/models"
 )
 
-// Meetups is the resolver for the meetups field.
-func (r *queryResolver) Meetups(ctx context.Context) ([]*models.Meetup, error) {
-	return r.MeetupRepository.GetMeetups()
-}
-
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() graphql.QueryResolver { return &queryResolver{r} }
 
 type queryResolver struct{ *Resolver }
+
+func (r *queryResolver) Meetups(ctx context.Context, filter *models.MeetupFilter, limit *int, offset *int) ([]*models.Meetup, error) {
+	return r.MeetupRepository.GetMeetups(filter, limit, offset)
+}
