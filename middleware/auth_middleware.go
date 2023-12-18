@@ -28,7 +28,7 @@ func AuthMiddleware(repo *postgres.UserRepository) func(http.Handler) http.Handl
 				return
 			}
 
-			user, err := repo.FindById(claims["jti"].(string))
+			user, err := repo.GetById(claims["jti"].(string))
 
 			if err != nil {
 				next.ServeHTTP(w, r)

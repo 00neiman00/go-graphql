@@ -42,6 +42,7 @@ func main() {
 		AllowCredentials: true,
 		Debug:            true,
 	}).Handler)
+
 	router.Use(middleware.RequestID)
 	router.Use(middleware.Logger)
 	router.Use(customMiddleware.AuthMiddleware(userRepo))

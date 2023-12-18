@@ -4,6 +4,7 @@ type Query {
 }
 
 type Mutation {
+  register(input: RegisterInput): AuthResponse!
   createMeetup(newMeetup: NewMeetup!): Meetup!
   updateMeetup(id: ID!, input: UpdateMeetup!): Meetup!
   deleteMeetup(id: ID!): Boolean!
@@ -12,8 +13,12 @@ type Mutation {
 type User {
   id: ID!
   username: String!
+  firstName: String!
+  lastName: String!
   email: String!
   meetup: [Meetup!]!
+  createdAt: Time!
+  updatedAt: Time!
 }
 
 type Meetup {
@@ -36,3 +41,24 @@ input UpdateMeetup {
 input MeetupFilter {
   name: String
 }
+
+input RegisterInput {
+  username: String!
+  email: String!
+  password: String!
+  confirmPassword: String!
+  firstName: String!
+  lastName: String!
+}
+
+type AuthResponse {
+  authToken: AuthToken!
+  user: User!
+}
+
+type AuthToken {
+  accessToken: String!
+  expiredAt: Time!
+}
+
+scalar Time
